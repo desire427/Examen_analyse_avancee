@@ -1,0 +1,11 @@
+# Vue Globale du Portefeuille
+
+Heatmap d'Activité (Achat Jour par Jour) == va nous montrer la coleration du nombre d'achat par rapport
+aux jour. plus la corelation la coloration tant vers mille, plus il y a d'achat. (uniquement pour 2010)
+
+Évolution du Chiffre d'Affaires
+nous montre l'evolution du chiffre d'affiche de decembre 2010 a decembre 2011
+
+Carte Mondiale : CA par Pays
+affiche le CA des pays selectionner
+

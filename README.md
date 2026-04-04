@@ -1,159 +1,95 @@
-# Segmentation Clients E-Commerce — RFM Dashboard Pro
+# Segmentation de clients E-commerce
+## Dashboard de pilotage marketing
 
-> **Dashboard décisionnel avancé** combinant l'analyse RFM classique avec le Machine Learning (K-Means) pour segmenter, comprendre et activer votre portefeuille clients e-commerce.
+### Description
+Ce projet est un dashboard interactif Streamlit pour l'analyse et la segmentation des clients d'un site e-commerce. Il utilise l'analyse RFM (Récence, Fréquence, Montant) combinée à l'algorithme K-Means pour identifier des segments de clients et aider le service marketing à prendre des décisions ciblées.
 
----
+### Sujet du projet
+**Segmentation de clients E-commerce**  
+**Dashboard de pilotage marketing**
 
-## Table des Matières
+**Source de données (obligatoire)**: Online Retail Dataset — UCI Repository  
+https://archive.ics.uci.edu/ml/datasets/online+retail
 
-1. [Vue d'ensemble](#vue-densemble)
-2. [Prérequis & Installation](#prérequis--installation)
-3. [Lancement de l'application](#lancement-de-lapplication)
-4. [Source de données](#source-de-données)
-5. [Méthodologie analytique](#méthodologie-analytique)
-   - [Le modèle RFM](#le-modèle-rfm)
-   - [Le clustering K-Means](#le-clustering-k-means)
-   - [Le nommage automatique des segments](#le-nommage-automatique-des-segments)
-6. [Pages du Dashboard — Guide complet](#pages-du-dashboard--guide-complet)
-   - [Page 1 — Vue Globale](#page-1--vue-globale)
-   - [Page 2 — Analyse Descriptive](#page-2--analyse-descriptive)
-   - [Page 3 — Segmentation RFM](#page-3--segmentation-rfm)
-   - [Page 4 — Interprétation Métier](#page-4--interprétation-métier)
-   - [Page 5 — Fiche Client](#page-5--fiche-client)
-   - [Page 6 — Comparateur de Segments](#page-6--comparateur-de-segments)
-   - [Page 7 — Simulateur What-If](#page-7--simulateur-what-if)
-   - [Page 8 — Clients à Risque](#page-8--clients-à-risque)
-   - [Page 9 — Export & Décisions](#page-9--export--décisions)
-7. [Interprétation des Visualisations](#interprétation-des-visualisations)
-8. [Segments Clients — Profils & Actions](#segments-clients--profils--actions)
-9. [Prise de Décision Marketing](#prise-de-décision-marketing)
-10. [Paramètres & Configuration](#paramètres--configuration)
-11. [Limites & Perspectives d'amélioration](#limites--perspectives-damélioration)
+**Objectif du dashboard**: Permettre au service marketing de comprendre le comportement des clients et de prendre des décisions ciblées.
 
----
+**Algorithme imposé**: Analyse RFM + K-Means.
 
-## Vue d'ensemble
+**Fonctionnalités obligatoires du dashboard**:
+- **Indicateurs globaux**: nombre de clients, chiffre d'affaires total, panier moyen.
+- **Filtres interactifs**: sélection par pays et par période temporelle.
+- **Analyse descriptive**: fréquence d'achat, distribution des montants dépensés.
+- **Segmentation**: choix du nombre de clusters et visualisation graphique des segments.
+- **Interprétation métier**: description des profils clients (fidèles, occasionnels, à risque).
 
-Ce dashboard a été conçu pour répondre à une question fondamentale du marketing digital :
+### Fonctionnalités principales
+- **Chargement automatique des données**: Téléchargement des données réelles depuis le repository UCI.
+- **Calcul RFM**: Analyse de la récence, fréquence et montant des achats par client.
+- **Clustering K-Means**: Segmentation automatique des clients en groupes personnalisables.
+- **Visualisations interactives**: Graphiques Plotly pour explorer les données et les segments.
+- **Filtres dynamiques**: Filtrage par pays et période pour une analyse ciblée.
+- **Profils clients**: Descriptions détaillées des segments identifiés.
+- **Interface utilisateur**: Design sombre avec image de fond personnalisée pour une expérience moderne.
 
-> **"Tous mes clients ne se valent pas — comment les différencier intelligemment pour leur parler de façon pertinente ?"**
+### Installation
+1. Clonez ce repository ou téléchargez les fichiers.
+2. Créez un environnement virtuel Python :
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
+   ```
+3. Installez les dépendances :
+   ```bash
+   pip install -r requirements.txt
+   ```
+   Ou manuellement :
+   ```bash
+   pip install streamlit pandas scikit-learn plotly openpyxl requests geopandas pycountry-convert matplotlib seaborn reportlab
+   ```
 
-Il repose sur trois piliers :
+### Utilisation
+1. Activez l'environnement virtuel :
+   ```bash
+   source .venv/bin/activate
+   ```
+2. Lancez l'application :
+   ```bash
+   streamlit run segmentation.py
+   ```
+3. Ouvrez votre navigateur à l'adresse indiquée (généralement http://localhost:8501).
 
-| Pilier | Technologie | Objectif |
-|---|---|---|
-| **Analyse comportementale** | RFM (Recency, Frequency, Monetary) | Quantifier le comportement d'achat |
-| **Machine Learning** | K-Means Clustering | Regrouper automatiquement les profils similaires |
-| **Intelligence décisionnelle** | Streamlit Dashboard | Transformer les données en actions concrètes |
+### Structure du projet
+- `segmentation.py`: Script principal de l'application Streamlit.
+- `requirements.txt`: Liste des dépendances Python.
+- `img.jpg`: Image de fond utilisée dans l'interface.
+- `Explication graphe/`: Dossier contenant des explications supplémentaires (si applicable).
 
-L'application est conçue pour être utilisée par des profils **non-techniques** (responsables marketing, CRM managers, directeurs commerciaux) autant que par des **analystes data**.
+### Technologies utilisées
+- **Streamlit**: Framework pour l'interface web.
+- **Pandas & NumPy**: Manipulation des données.
+- **Scikit-learn**: Algorithmes de machine learning (K-Means).
+- **Plotly**: Visualisations interactives.
+- **Requests**: Téléchargement des données.
+- **Geopandas & Matplotlib**: Cartes et graphiques supplémentaires.
 
----
+### Données
+Les données proviennent du dataset "Online Retail" de l'UCI Machine Learning Repository. Elles contiennent des transactions d'un site e-commerce britannique entre décembre 2010 et décembre 2011. Le dataset est automatiquement téléchargé au lancement de l'application.
 
-## Prérequis & Installation
+### Analyse RFM
+- **Récence (Recency)**: Nombre de jours depuis le dernier achat.
+- **Fréquence (Frequency)**: Nombre total de commandes.
+- **Montant (Monetary)**: Valeur totale des achats.
 
-### Environnement Python
+Ces métriques sont normalisées et utilisées pour le clustering K-Means.
 
-Python **3.8 ou supérieur** est requis.
+### Segmentation
+L'utilisateur peut choisir le nombre de clusters (segments). Chaque segment est visualisé sur un graphique 3D et décrit en termes métier (ex: clients fidèles, occasionnels, à risque de churn).
 
-### Installation des dépendances
+### Contribution
+Ce projet est destiné à des fins éducatives et d'analyse de données. Pour des modifications, veuillez contacter l'auteur.
 
-```bash
-pip install streamlit pandas scikit-learn plotly openpyxl requests \
-            geopandas pycountry-convert matplotlib seaborn reportlab
-```
-
-> **Note :** `geopandas` est optionnel. Si l'installation échoue (dépendances système complexes), la carte choroplèthe sera désactivée mais le reste du dashboard fonctionnera normalement. Une variable interne `HAS_GEO` gère cette situation.
-
-### Vérification des installations
-
-```bash
-python -c "import streamlit, pandas, sklearn, plotly; print('OK')"
-```
-
----
-
-## Lancement de l'application
-
-```bash
-streamlit run dashboard_segmentation.py
-```
-
-L'application s'ouvrira automatiquement dans votre navigateur à l'adresse : `http://localhost:8501`
-
-### Options de lancement avancées
-
-```bash
-# Spécifier un port
-streamlit run dashboard_segmentation.py --server.port 8080
-
-# Mode headless (serveur sans navigateur)
-streamlit run dashboard_segmentation.py --server.headless true
-
-# Partager en réseau local
-streamlit run dashboard_segmentation.py --server.address 0.0.0.0
-```
-
----
-
-### Structure interne du code
-
-Le fichier `dashboard_segmentation.py` est organisé en blocs fonctionnels distincts :
-
-```
-[CONFIG PAGE]          → Configuration Streamlit, session state
-[STYLE CSS]            → Thème dark, typographie, composants UI
-[PALETTE SEGMENTS]     → Couleurs et métadonnées par segment
-[CHARGEMENT DONNÉES]   → load_and_clean_data(), generate_synthetic_data()
-[CALCUL RFM]           → compute_rfm()
-[CLUSTERING]           → run_kmeans(), elbow_data()
-[NOMMAGE SEGMENTS]     → name_segments()
-[HELPERS GRAPHIQUES]   → style_fig(), kpi_card(), ...
-[SIDEBAR]              → Navigation, filtres, paramètres
-[PAGES]                → 9 pages indépendantes (if/elif)
-[FOOTER]               → Pied de page
-```
-
----
-
-## Source de données
-
-### Dataset par défaut : UCI Online Retail
-
-Le dashboard est pré-calibré sur le **UCI Online Retail Dataset**, un jeu de données de référence en e-commerce analytics.
-
-| Caractéristique | Valeur |
-|---|---|
-| Source | [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/online+retail) |
-| Période couverte | Déc. 2010 → Déc. 2011 |
-| Transactions | ~541 000 lignes brutes |
-| Pays | Principalement Royaume-Uni + exports UE |
-| Format | Excel `.xlsx` |
-
-**Colonnes attendues :**
-
-| Colonne | Type | Description |
-|---|---|---|
-| `InvoiceNo` | String | Identifiant de facture (préfixe `C` = retour, exclu) |
-| `StockCode` | String | Code article |
-| `Description` | String | Libellé produit |
-| `Quantity` | Integer | Quantité (lignes négatives = retours, exclues) |
-| `InvoiceDate` | DateTime | Date et heure de la transaction |
-| `UnitPrice` | Float | Prix unitaire en GBP (£) |
-| `CustomerID` | String | Identifiant client (lignes sans ID exclues) |
-| `Country` | String | Pays de la commande |
-
-### Données de démonstration synthétiques
-
-En l'absence de fichier uploadé, le dashboard génère automatiquement **25 000 transactions synthétiques** reproduisant les caractéristiques statistiques du dataset UCI (distribution des prix, répartition géographique, saisonnalité). Ces données sont reproductibles via `numpy.random.seed(42)`.
-
-### Import de vos propres données
-
-Via la sidebar, importez un fichier `.xlsx` ou `.csv` respectant les colonnes ci-dessus. Le code normalise automatiquement les noms de colonnes (insensible à la casse, aux espaces).
-
-### Nettoyage automatique appliqué
-
-Le pipeline de nettoyage effectue les opérations suivantes :
+### Licence
+Aucune licence spécifique. Utilisez à vos risques et périls.
 
 - Suppression des lignes sans `CustomerID` ou sans `InvoiceDate`
 - Exclusion des factures d'annulation (préfixe `C`)

@@ -43,8 +43,17 @@ try:
 except:
     HAS_GEO = False
 
+import requests
+
 warnings.filterwarnings("ignore")
 plt.style.use("dark_background")
+
+# Load background image
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+bg_image = get_base64_image("img.jpg")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIG PAGE
@@ -56,83 +65,88 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Session state pour persistence
 if "decision_log" not in st.session_state:
     st.session_state.decision_log = []
 
 # ─────────────────────────────────────────────────────────────────────────────
 # STYLE CSS
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown("""
+css = """
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
 
-  html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+  html, body, [class*="css"] {{ font-family: 'DM Sans', sans-serif; }}
 
   /* Fond général */
-  .stApp { background: #0d0f14; color: #e8eaf0; }
+  .stApp {{ 
+    background: linear-gradient(rgba(13, 15, 20, 0.85), rgba(13, 15, 20, 0.85)), url('data:image/jpeg;base64,{bg_image}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #e8eaf0; 
+  }}
 
   /* Sidebar */
-  [data-testid="stSidebar"] {
+  [data-testid="stSidebar"] {{
     background: #13161f;
     border-right: 1px solid #1e2230;
-  }
-  [data-testid="stSidebar"] .stMarkdown h2 {
+  }}
+  [data-testid="stSidebar"] .stMarkdown h2 {{
     color: #7c6af7;
     font-family: 'Space Mono', monospace;
     font-size: 0.85rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-  }
+  }}
 
   /* Titres */
-  h1 { color: #ffffff !important; font-weight: 700 !important; }
-  h2, h3 { color: #c9cbdb !important; }
+  h1 {{ color: #ffffff !important; font-weight: 700 !important; }}
+  h2, h3 {{ color: #c9cbdb !important; }}
 
   /* Cartes KPI */
-  .kpi-card {
+  .kpi-card {{
     background: linear-gradient(135deg, #1a1d2e 0%, #1e2235 100%);
     border: 1px solid #2a2d45;
     border-radius: 12px;
     padding: 20px 24px;
     text-align: center;
     transition: transform 0.2s;
-  }
-  .kpi-card:hover { transform: translateY(-2px); border-color: #7c6af7; }
-  .kpi-value {
+  }}
+  .kpi-card:hover {{ transform: translateY(-2px); border-color: #7c6af7; }}
+  .kpi-value {{
     font-family: 'Space Mono', monospace;
     font-size: 2rem;
     font-weight: 700;
     color: #7c6af7;
     display: block;
-  }
-  .kpi-label {
+  }}
+  .kpi-label {{
     font-size: 0.8rem;
     color: #8b8fa8;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-top: 4px;
     display: block;
-  }
-  .kpi-delta {
+  }}
+  .kpi-delta {{
     font-size: 0.75rem;
     color: #50e3a4;
     margin-top: 6px;
     display: block;
-  }
+  }}
 
   /* Badge segment */
-  .segment-badge {
+  .segment-badge {{
     display: inline-block;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.05em;
-  }
+  }}
 
   /* Section header */
-  .section-header {
+  .section-header {{
     border-left: 3px solid #7c6af7;
     padding-left: 12px;
     margin: 24px 0 16px 0;
@@ -141,19 +155,19 @@ st.markdown("""
     color: #9b9dbf;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-  }
+  }}
 
   /* Plotly charts dark */
-  .js-plotly-plot { border-radius: 10px; }
+  .js-plotly-plot {{ border-radius: 10px; }}
 
   /* Tabs */
-  .stTabs [data-baseweb="tab-list"] { 
+  .stTabs [data-baseweb="tab-list"] {{ 
     background: transparent; 
     border-radius: 8px;
     border-bottom: 2px solid #1e2230;
     gap: 8px;
-  }
-  .stTabs [data-baseweb="tab"] { 
+  }}
+  .stTabs [data-baseweb="tab"] {{ 
     color: #8b8fa8;
     padding: 12px 16px;
     border-radius: 6px 6px 0 0;
@@ -161,19 +175,19 @@ st.markdown("""
     background: transparent;
     font-weight: 500;
     transition: all 0.2s ease;
-  }
-  .stTabs [data-baseweb="tab"]:hover {
+  }}
+  .stTabs [data-baseweb="tab"]:hover {{
     color: #c9cbdb;
     background: #1a1d2e;
-  }
-  .stTabs [aria-selected="true"] { 
+  }}
+  .stTabs [aria-selected="true"] {{ 
     color: #7c6af7 !important;
     background: #1a1d2e !important;
     border-bottom: 2px solid #7c6af7 !important;
-  }
+  }}
 
   /* Bouton */
-  .stButton > button {
+  .stButton > button {{
     background: linear-gradient(135deg, #7c6af7, #5b4de8);
     color: white;
     border: none;
@@ -181,25 +195,25 @@ st.markdown("""
     font-weight: 600;
     padding: 10px 24px;
     transition: opacity 0.2s;
-  }
-  .stButton > button:hover { opacity: 0.85; }
+  }}
+  .stButton > button:hover {{ opacity: 0.85; }}
 
   /* Info box */
-  .info-box {
+  .info-box {{
     background: #1a1d2e;
     border: 1px solid #2a2d45;
     border-radius: 10px;
     padding: 16px 20px;
     margin: 8px 0;
-  }
-  .info-box p { color: #c9cbdb; margin: 4px 0; font-size: 0.9rem; }
-  .info-box strong { color: #7c6af7; }
+  }}
+  .info-box p {{ color: #c9cbdb; margin: 4px 0; font-size: 0.9rem; }}
+  .info-box strong {{ color: #7c6af7; }}
 
   /* Scroll top button area */
-  footer { display: none; }
+  footer {{ display: none; }}
 
   /* Tooltip */
-  .tooltip-icon {
+  .tooltip-icon {{
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -213,34 +227,36 @@ st.markdown("""
     cursor: help;
     margin-left: 6px;
     vertical-align: middle;
-  }
+  }}
 
-  .tooltip-icon:hover {
+  .tooltip-icon:hover {{
     background: #5b4de8;
-  }
+  }}
 
   /* Custom dataframe styling */
-  .dataframe-container {
+  .dataframe-container {{
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #2a2d45;
-  }
+  }}
 
   /* Churn badge */
-  .churn-critical { background: #e87c7c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-  .churn-high { background: #f7a76c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-  .churn-medium { background: #f7d76c; color: #0d0f14; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+  .churn-critical {{ background: #e87c7c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }}
+  .churn-high {{ background: #f7a76c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }}
+  .churn-medium {{ background: #f7d76c; color: #0d0f14; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }}
 
   /* Animated KPI */
-  @keyframes slideInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animated-kpi {
+  @keyframes slideInUp {{
+    from {{ opacity: 0; transform: translateY(20px); }}
+    to {{ opacity: 1; transform: translateY(0); }}
+  }}
+  .animated-kpi {{
     animation: slideInUp 0.6s ease-out forwards;
-  }
+  }}
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(f"""{css}""".format(bg_image=bg_image), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PALETTE SEGMENTS
@@ -317,8 +333,15 @@ def load_and_clean_data(file_obj=None):
             file_obj.seek(0)
             df = pd.read_csv(file_obj, encoding="ISO-8859-1")
     else:
-        # Génération d'un dataset synthétique réaliste pour la démo
-        df = generate_synthetic_data()
+        # Téléchargement des données réelles depuis UCI Repository
+        try:
+            url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx"
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            df = pd.read_excel(BytesIO(response.content), engine="openpyxl")
+        except Exception as e:
+            st.error(f"Erreur lors du téléchargement des données : {e}. Utilisation de données synthétiques.")
+            df = generate_synthetic_data()
 
     # Normalisation colonnes
     col_map = {c.strip().lower(): c.strip() for c in df.columns}
@@ -336,7 +359,7 @@ def load_and_clean_data(file_obj=None):
 
     # Nettoyage
     df.dropna(subset=["CustomerID", "InvoiceDate"], inplace=True)
-    df["CustomerID"] = df["CustomerID"].astype(str).str.strip()
+    df["CustomerID"] = df["CustomerID"].astype(int).astype(str).str.strip()
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
     df = df[df["Quantity"] > 0]
     df = df[df["UnitPrice"] > 0]
