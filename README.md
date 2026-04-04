@@ -1,4 +1,4 @@
-# 📊 Segmentation Clients E-Commerce — RFM Dashboard Pro
+# Segmentation Clients E-Commerce — RFM Dashboard Pro
 
 > **Dashboard décisionnel avancé** combinant l'analyse RFM classique avec le Machine Learning (K-Means) pour segmenter, comprendre et activer votre portefeuille clients e-commerce.
 
